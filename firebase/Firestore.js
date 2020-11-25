@@ -55,6 +55,7 @@ class Firestore {
         reject(error);
       });
   }
+  
   updateUser = (user, success, reject) => {
     firebase.firestore().collection('Account')
       .doc(user.id)
@@ -93,7 +94,7 @@ class Firestore {
       .update({
         model: car.model,
         description: car.description,
-        price: car.price
+        // price: car.price
       })
       .then(function () {
         success();
