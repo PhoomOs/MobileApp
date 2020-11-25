@@ -21,7 +21,12 @@ class Add extends Component {
     super(props);
     this.state = {
       model: null,
-      des: null
+      des: null,
+      firstname: this.props.todos.firstname,
+      lastname: this.props.todos.lastname,
+
+      uid: this.props.todos.uid, // auth.user.uid
+      docId : this.props.todos.id //doc.id
     };
   }
 
@@ -30,6 +35,7 @@ class Add extends Component {
   }
 
   success = (docRef) => {
+    console.log('addCar Success');
     console.log(docRef);
     let car = {
       model: this.state.model,
@@ -41,10 +47,16 @@ class Add extends Component {
     console.log(this.props.cars)
     this.props.navigation.navigate('MyBottomtab');
   };
+
   onAdd = () => {
     var car = {
       model: this.state.model,
-      description: this.state.des
+      description: this.state.des,
+      //////
+      docId: this.state.docId
+      // firstname : this.state.firstname,
+      // lastname : this.state.lastnamea,
+
     }
 
     firestore.addCar(car, this.success, this.reject);
@@ -125,6 +137,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
+    todos: state.userReducer.userList,
     cars: state.carReducer.cars
   }
 }

@@ -116,7 +116,7 @@ class Firestore {
       });
   }
 
-  //////////USER 
+  //////////USER ////
 
   addUser = (User, success, reject) => {
     User.createdDate = firebase.firestore.FieldValue.serverTimestamp();

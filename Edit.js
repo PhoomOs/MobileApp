@@ -16,57 +16,58 @@ import {
 import { useRoute } from '@react-navigation/native';
 import firestore from './firebase/Firestore';
 import { connect } from 'react-redux';
-import { addCar,editCar,deleteCar } from './actions/car';
+import { addCar, editCar, deleteCar } from './actions/car';
 
 
 class Edit extends Component {
   constructor(props) {
     super(props);
 
-    const{route} = this.props;
+    const { route } = this.props;
     this.route = route
     this.state = {
-      model:route.params.car.model,
-      description:route.params.car.description,
+      model: route.params.car.model,
+      description: route.params.car.description,
     };
   }
 
-  updateSuccess=()=>{
-    let car={
-      model:this.state.model,
-      description:this.state.description,
-      id:this.route.params.car.id
+  updateSuccess = () => {
+    let car = {
+      model: this.state.model,
+      description: this.state.description,
+      id: this.route.params.car.id
     }
     this.props.edit(car)
     this.props.navigation.navigate('MyBottomtab');
   };
 
-  reject=(error)=>{
+  reject = (error) => {
     console.log(error);
   }
 
   onEdit = async () => {
-    let car={
-      model:this.state.model,
-      description:this.state.description,
-      id:this.route.params.car.id,
-      price:100000
+
+    let car = {
+      model: this.state.model,
+      description: this.state.description,
+      id: this.route.params.car.id,
     }
-    await firestore.updateCarByID(car,this.updateSuccess,this.reject);
+    await firestore.updateCarByID(car, this.updateSuccess, this.reject);
+
   };
 
-  deleteSuccess=()=>{
-    let car={
-      model:this.state.model,
-      description:this.state.description,
-      id:this.route.params.car.id
+  deleteSuccess = () => {
+    let car = {
+      model: this.state.model,
+      description: this.state.description,
+      id: this.route.params.car.id
     }
     this.props.del(car);
   }
 
   onDelete = async () => {
     let id = this.route.params.car.id;
-    await firestore.deleteCar(id,this.deleteSuccess,this.reject);
+    await firestore.deleteCar(id, this.deleteSuccess, this.reject);
   }
 
 
@@ -79,9 +80,9 @@ class Edit extends Component {
     const { navigation } = this.props;
 
     return (
-        <View style={{flex:1,justifyContent:"center"}}>
-          <View style={styles.middle}>
-            <View style={{ flexDirection: 'row', marginBottom: 16 }}>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={styles.middle}>
+          <View style={{ flexDirection: 'row', marginBottom: 16 }}>
             <Text style={{ fontSize: 25, marginStart: 8, alignSelf: 'center' }}>
               Edit Car
             </Text>
@@ -89,18 +90,18 @@ class Edit extends Component {
 
           <TextInput
             placeholder="Model"
-            value = {this.state.model}
+            value={this.state.model}
             style={styles.textInput}
             onChangeText={(txt) => {
               this.setState({ model: txt });
             }}
           />
-          
+
 
           <TextInput
             placeholder="Description"
-            value = {this.state.description}
-            style={[styles.textInput,{height: 150,paddingTop:8}]}
+            value={this.state.description}
+            style={[styles.textInput, { height: 150, paddingTop: 8 }]}
             multiline={true}
             onChangeText={(txt) => {
               this.setState({ description: txt });
@@ -123,7 +124,7 @@ class Edit extends Component {
             <Text style={{ fontSize: 15 }}>Cancel</Text>
           </TouchableOpacity>
         </View>
-        </View>
+      </View>
     );
   }
 }
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingStart: 10,
-    paddingEnd:10,
+    paddingEnd: 10,
     marginBottom: 8,
   },
 });
@@ -166,4 +167,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Edit);
+export default connect(mapStateToProps, mapDispatchToProps)(Edit);
