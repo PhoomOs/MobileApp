@@ -38,6 +38,9 @@ class Edit extends Component {
       id: this.route.params.car.id
     }
     this.props.edit(car)
+    console.log('onEdit')
+    console.log(this.props.cars)
+    console.log('onEdit END')
     this.props.navigation.navigate('MyBottomtab');
   };
 
@@ -46,7 +49,6 @@ class Edit extends Component {
   }
 
   onEdit = async () => {
-
     let car = {
       model: this.state.model,
       description: this.state.description,
@@ -63,6 +65,9 @@ class Edit extends Component {
       id: this.route.params.car.id
     }
     this.props.del(car);
+    console.log('onDelete')
+    console.log(this.props.cars)
+    console.log('onDelete END')
   }
 
   onDelete = async () => {

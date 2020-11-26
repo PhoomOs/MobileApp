@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { addCar } from './actions/car';
 
 class Add extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -24,9 +25,8 @@ class Add extends Component {
       des: null,
       firstname: this.props.todos.firstname,
       lastname: this.props.todos.lastname,
-
       uid: this.props.todos.uid, // auth.user.uid
-      docId : this.props.todos.id //doc.id
+      // docId: this.props.todos.id //doc.id
     };
   }
 
@@ -40,26 +40,32 @@ class Add extends Component {
     let car = {
       model: this.state.model,
       description: this.state.des,
-      id: docRef.id
+      id: docRef.id,
+      uid: this.state.uid,
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
     }
     //console.log(car)
     this.props.add(car)
+    console.log('onAdd')
     console.log(this.props.cars)
+    console.log('onAdd END')
     this.props.navigation.navigate('MyBottomtab');
   };
+
 
   onAdd = () => {
     var car = {
       model: this.state.model,
       description: this.state.des,
       //////
-      docId: this.state.docId
-      // firstname : this.state.firstname,
-      // lastname : this.state.lastnamea,
+      uid: this.state.uid,
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
 
     }
-
     firestore.addCar(car, this.success, this.reject);
+
   }
 
   onCancel = () => {

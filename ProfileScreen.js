@@ -4,18 +4,22 @@ import { connect } from 'react-redux';
 import firestore from './firebase/Firestore'
 import { addUser } from './actions/User';
 import auth from './firebase/Auth';
+import { updateCar } from './actions/car';
 import * as firebase from 'firebase';
 class Profile extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      id: this.props.todos.id,
+      id: this.props.todos.id, //docId
       // username: this.props.todos.username,
       //   studentID: this.props.todos.studentID,
       firstname: this.props.todos.firstname,
       lastname: this.props.todos.lastname,
     };
+
   }
+
 
   logOut = () => {
     auth.signOut(this.reject)
@@ -23,9 +27,17 @@ class Profile extends Component {
     // console.log(this.props.todos)
   }
 
+
   reject = (error) => {
     console.log(error);
+    console.log('error on ProfileUpdate')
   }
+
+  //////// Now //////////////////
+  updateCarSuccess = () => {
+    console.log('Nice Update')
+  }
+
 
   updateSuccess = () => {
     console.log("update success")
@@ -33,8 +45,7 @@ class Profile extends Component {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
       id: this.state.id,
-      //   studentID: this.state.studentID,
-      //   username: this.state.username,
+
     }
     this.props.add(user);
     Alert.alert(
@@ -47,18 +58,71 @@ class Profile extends Component {
     );
     console.log(this.props.todos)
   }
-  
+  //////////////////// NOW /////////////
+
+  onGetCarByUid = async (querySnapshot) => {
+    var cars = []
+    let upCar = {
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
+      uid: firebase.auth().currentUser.uid
+    }
+    querySnapshot.forEach(async function (doc) {
+      let car = doc.data();
+      car.id = doc.id
+      cars = cars.concat(car);
+
+    });
+
+    await cars.map((car) => { firestore.updateUserPost(car, upCar, this.updateCarSuccess, this.reject) })
+    console.log('onGetCarByUid Before Success');
+    console.log(cars);
+
+    this.props.updateCar(upCar)
+    console.log(upCar)
+    console.log('onUpCar')
+    console.log(this.props.cars)
+    // this.props.add(users[0])
+
+    console.log('onUpCar END')
+    // let car = {
+    //   firstname: this.state.firstname,
+    //   lastname: this.state.lastname,
+    //   // id: this.props.cars.id
+    //   id: '9Cvo9CdbKBqBi6ffIyXw'
+    // }
+
+    // console.log(car.id)
+    // console.log('onCarId')
+
+    // this.props.updateCar(car);
+    // console.log("updatePost success")
+    // console.log(this.props.cars)
+    // console.log('updatePost END')
+  }
+
   editProfile = async () => {
     let user = {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
       id: this.state.id,
+
       //   studentID: this.state.studentID,
       //   username: this.state.username,
     }
+
+    let car = {
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
+      uid: firebase.auth().currentUser.uid
+    }
+
     console.log('onEditProfile User : ', user)
     console.log(firebase.auth().currentUser.uid)
     await firestore.updateUser(user, this.updateSuccess, this.reject)
+
+    console.log('onEditProfile Car : ', car)
+    await firestore.getCarByUid(car, this.onGetCarByUid, this.reject)
   }
 
   Header = () => {
@@ -73,7 +137,7 @@ class Profile extends Component {
       </View>
     );
   }
-  
+
   render(props) {
     return (
       <View style={{ flex: 1, paddingTop: 30 }}>
@@ -150,14 +214,20 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    add: (user) => dispatch(addUser(user))
+    add: (user) => dispatch(addUser(user)),
+    addCar: (car) => dispatch(addCar(car)),
+    updateCar: (car) => dispatch(updateCar(car)),
   }
 }
 
 const mapStateToProps = (state) => {
+
   return {
-    todos: state.userReducer.userList
+    todos: state.userReducer.userList,
+    cars: state.carReducer.cars,
+    // getUpdateCar: state.carReducer.cars
   }
+
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
 

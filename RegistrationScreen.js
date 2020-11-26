@@ -286,6 +286,7 @@ const mapDispatchToProps = (dispatch) => {
     add: (user) => dispatch(addUser(user))
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     todos: state.userReducer.userList

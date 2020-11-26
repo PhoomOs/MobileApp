@@ -51,6 +51,7 @@ class Login extends Component {
 
     };
 
+
     onsuccess = (querySnapshot) => {
         var users = []
         querySnapshot.forEach(function (doc) {
@@ -63,6 +64,7 @@ class Login extends Component {
         this.props.add(users[0])
     }
 
+
     onSuccessPost = (querySnapshot) => {
         var cars = []
         querySnapshot.forEach(function (doc) {
@@ -70,10 +72,10 @@ class Login extends Component {
             car.id = doc.id;
             cars = cars.concat(car);
         });
-        console.log('This Fetch POst')
-        console.log(cars);
         this.props.addCar(cars)
-        
+        console.log('onLogin')
+        console.log(cars);
+        console.log('onLogin END')
         // this.props.navigation.navigate("MyBottomtab");
     }
 
@@ -84,7 +86,6 @@ class Login extends Component {
         console.log("this")
         firestore.getUserByUid(uid, this.onsuccess, this.onreject)
         // firestore.getAllCar(this.onSuccessPost, this.onreject);
-
 
         
         // .forEach(function (doc) {

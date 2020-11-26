@@ -20,7 +20,7 @@ class Firestore {
       console.log("firebase apps already running...");
     }
     //this.db = firebase.firestore();
-    
+
   }
 
   addCarWithID = (car, success, reject) => {
@@ -37,7 +37,6 @@ class Firestore {
   addCar = (car, success, reject) => {
     car.createdDate = firebase.firestore.FieldValue.serverTimestamp();
     firebase.firestore().collection('Car').add(car)
-
       .then(function (docRef) {
         success(docRef);
       })
@@ -55,7 +54,7 @@ class Firestore {
         reject(error);
       });
   }
-  
+
   updateUser = (user, success, reject) => {
     firebase.firestore().collection('Account')
       .doc(user.id)
@@ -72,6 +71,36 @@ class Firestore {
         reject(error)
       });
   }
+  
+
+  updateUserPost = (car,upCar, success, reject) => {
+    firebase.firestore().collection('Car')
+      .doc(car.id)
+      .update({
+        firstname: upCar.firstname,
+        lastname: upCar.lastname,
+      })
+      .then(function () {
+        success(null);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  }
+  // updateUserPost = (car, success, reject) => {
+  //   firebase.firestore().collection('Car')
+  //     .doc(car.id)
+  //     .update({
+  //       firstname: car.firstname,
+  //       lastname: car.lastname,
+  //     })
+  //     .then(function () {
+  //       success(null);
+  //     })
+  //     .catch(function (error) {
+  //       reject(error)
+  //     });
+  // }
 
 
   getCarByPrice = (price, success, reject) => {
@@ -79,6 +108,18 @@ class Firestore {
       .where("price", ">=", price)
       .orderBy("price", "desc")
       .limit(6)
+      .get()
+      .then(function (querySnapshot) {
+        success(querySnapshot);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  }
+
+  getCarByUid = (car, success, reject) => {
+    firebase.firestore().collection('Car')
+      .where("uid", "==", car.uid)
       .get()
       .then(function (querySnapshot) {
         success(querySnapshot);
@@ -128,6 +169,7 @@ class Firestore {
         reject(error);
       });
   }
+
   getUser = (success, reject) => {
     firebase.firestore().collection('Account').get()
       .then(function (querySnapshot) {

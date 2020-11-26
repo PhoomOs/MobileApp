@@ -8,11 +8,11 @@ export const addUser=(data)=>{
   );
 }
 
-export const editUser=(data)=>{
-  return(
-    {
-        type:EDIT_USER,
-        data:data
-    }
-  );
-}
+// export const editUser=(data)=>{
+//   return(
+//     {
+//         type:EDIT_USER,
+//         data:data
+//     }
+//   );
+// }

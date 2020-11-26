@@ -87,6 +87,10 @@ class Menu extends Component {
         <TouchableOpacity style={{ backgroundColor: "white" }} onPress={() => { this.props.navigation.navigate("Edit", { car: item }) }}>
           <View style={styles.itemStyle}>
             <View style={{ paddingLeft: 8, flex: 1 }}>
+
+              <Text style={styles.title}>{item.firstname}</Text>
+              <Text style={styles.title}>{item.lastname}</Text>
+
               <Text style={styles.title}>{item.model}</Text>
               <Text>{item.description}</Text>
               <Text>{this.state.selectedID}</Text>
@@ -110,6 +114,7 @@ class Menu extends Component {
       </View>
     );
   }
+
 }
 const styles = StyleSheet.create({
   itemStyle: {
