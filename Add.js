@@ -15,7 +15,7 @@ import {
 import firestore from './firebase/Firestore.js'
 import { connect } from 'react-redux';
 import { addCar } from './actions/car';
-
+import * as firebase from 'firebase';
 class Add extends Component {
 
   constructor(props) {
@@ -27,6 +27,7 @@ class Add extends Component {
       lastname: this.props.todos.lastname,
       uid: this.props.todos.uid, // auth.user.uid
       // docId: this.props.todos.id //doc.id
+      uri: this.props.todos.uri
     };
   }
 
@@ -44,6 +45,7 @@ class Add extends Component {
       uid: this.state.uid,
       firstname: this.state.firstname,
       lastname: this.state.lastname,
+      uri: this.state.uri
     }
     //console.log(car)
     this.props.add(car)
@@ -59,13 +61,12 @@ class Add extends Component {
       model: this.state.model,
       description: this.state.des,
       //////
-      uid: this.state.uid,
+      uid: firebase.auth().currentUser.uid,
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-
+      uri : this.state.uri
     }
     firestore.addCar(car, this.success, this.reject);
-
   }
 
   onCancel = () => {

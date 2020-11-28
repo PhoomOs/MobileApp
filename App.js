@@ -16,6 +16,7 @@ import Login from './LoginScreen';
 import Registration from './RegistrationScreen'
 import RecoverPassword from './RecoverPassword';
 import Profile from './ProfileScreen'
+import YourList from './YourList'
 
 import { Provider } from 'react-redux'
 import configureStore from './Store'
@@ -63,6 +64,13 @@ function ProfileScreen() {
   );
 }
 
+// const YourList = () => {
+//   const navigation = useNavigation();
+//   return (
+//     <YourList navigation={navigation} />
+//   );
+// }
+
 const RecoverPasswordScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -77,6 +85,7 @@ function LoginScreen() {
     <Login navigation={navigation} />
   );
 }
+
 
 const BottomTab = createBottomTabNavigator();
 function MyBottomTab() {
@@ -120,6 +129,10 @@ function MyStack() {
       <Stack.Screen name="Menu"
         component={MenuScreen}
         options={{ headerShown: false }} />
+
+      {/* <Stack.Screen name="YourList"
+        component={YourList}
+        options={{ headerShown: false }} /> */}
 
       <Stack.Screen name="Add"
         component={AddScreen}

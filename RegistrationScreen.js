@@ -1,133 +1,3 @@
-// import React, { Component } from 'react';
-// import {
-//   View, TouchableOpacity, StyleSheet, Text, Alert, Image, ImageBackground, TextInput
-// } from 'react-native';
-// import firestore from './firebase/Firestore'
-// class Registration extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       firstname: null,
-//       lastname: null,
-//       studentid: null,
-//       username: null,
-
-//     };
-
-//   }
-
-//   success = (docRef) => {
-//     Alert.alert(
-//       "Success",
-//       "Add Your Account Success",
-//       [
-//         { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
-//       ],
-//       { cancelable: false }
-//     );
-//   }
-//   addProfile = async () => {
-//     var User = {
-//       firstname: this.state.firstname,
-//       lastname: this.state.lastname,
-//       studentID: this.state.studentid,
-//       username: this.state.username
-//     }
-//     await firestore.addUser(User, this.success, this.reject);
-//   }
-
-//   cancel = () => {
-//     this.props.navigation.navigate("Login")
-//   }
-//   render(props) {
-//     const { navigation } = this.props;
-//     return (
-//       <ImageBackground
-//         style={styles.imageBackground}
-//         source={{ uri: 'https://sv1.picz.in.th/images/2020/07/28/EYFj0b.jpg' }}
-//         blurRadius={1}>
-
-
-//         <View style={styles.middle} >
-//           <View style={{ flexDirection: 'row', marginBottom: 16 }}>
-//             <Image
-//               style={styles.image}
-//               source={{ uri: 'https://sv1.picz.in.th/images/2020/07/28/Ez0iOl.png' }}
-//             />
-//             <Text style={{ fontSize: 25, marginStart: 8, alignSelf: "center" }}>Registration</Text>
-//           </View>
-
-//           <TextInput placeholder="First Name" style={styles.textInput}
-//             onChangeText={(firstname) => this.setState({ firstname })} />
-
-//           <TextInput placeholder="Last Name" style={styles.textInput}
-//             onChangeText={(lastname) => this.setState({ lastname })} />
-
-//           <TextInput placeholder="StudentID" style={styles.textInput}
-//             onChangeText={(studentid) => this.setState({ studentid })} />
-
-//           <TextInput placeholder="Username" style={styles.textInput}
-//             onChangeText={(username) => this.setState({ username })} />
-
-
-//           <TouchableOpacity style={styles.buttonLogin} onPress={this.addProfile}>
-//             <Text style={{ fontSize: 15 }}>Registor</Text>
-//           </TouchableOpacity>
-
-//           <TouchableOpacity style={styles.buttonLogin} onPress={this.cancel}>
-//             <Text style={{ fontSize: 15 }}>Cancel</Text>
-//           </TouchableOpacity>
-
-//         </View>
-//       </ImageBackground>
-//     );
-
-//   }
-// }
-// const styles = StyleSheet.create({
-//   middle: {
-//     backgroundColor: '#ffffff',
-//     borderWidth: 1,
-//     padding: 16,
-//     margin: 16,
-//     borderTopLeftRadius: 50,
-//     borderBottomRightRadius: 50,
-//   },
-//   image: {
-//     width: 60,
-//     height: 60,
-//     resizeMode: 'contain',
-//     alignSelf: 'center',
-//     marginBottom: 8
-
-//   },
-//   imageBackground: {
-//     flex: 1,
-//     resizeMode: "cover",
-//     justifyContent: "center"
-//   },
-//   buttonLogin: {
-//     justifyContent: "center",
-//     alignItems: "center",
-//     backgroundColor: "#DDDDDD",
-//     borderRadius: 25,
-//     height: 50,
-//     marginBottom: 8
-//   },
-//   textInput: {
-//     borderRadius: 25,
-//     height: 50,
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     paddingStart: 20,
-//     marginBottom: 8
-//   },
-
-
-// });
-
-// export default Registration;
-
 import React, { Component } from 'react';
 import {
   View,
@@ -135,7 +5,8 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  Alert
+  Alert,
+  Image
 
 } from 'react-native';
 import * as firebase from 'firebase';
@@ -144,37 +15,49 @@ import '@firebase/firestore'
 import '@firebase/auth';
 import { connect } from 'react-redux';
 import { addUser } from './actions/User';
-
 import firestore from './firebase/Firestore'
 import auth from './firebase/Auth'
+import 'firebase/storage';
+import * as ImagePicker from 'expo-image-picker';
+import storage from './firebase/Storage';
+
 class Registraion extends Component {
   constructor(props) {
     super(props);
     this.state = {
+
       email: null,
       password: null,
       firstname: null,
       lastname: null,
-      username: null
-    };
+      // username: null,
+      image: "https://sv1.picz.in.th/images/2020/08/01/EhqNgn.png",
+      uri: null
 
+    };
     // this.Auth = firebase.auth().currentUser
+
   }
 
   componentDidMount() {
 
   }
 
+
+
   success = (docRef) => {
+    // auth.signOut(this.reject)
     Alert.alert(
       "Success",
       "Add Your Account Success",
       [
-        { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
+        // { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
+        { text: "OK" }
       ],
       { cancelable: false }
     );
-    console.log("nice")
+
+    console.log("Regis success")
     // firebase.auth().onAuthStateChanged(user => {
 
     //   if (user != null) {
@@ -189,40 +72,108 @@ class Registraion extends Component {
     // })
   }
   unsuccess = (error) => {
+
+    console.log("Storage Error")
     console.log(error)
+    Alert.alert(
+      "Alert !!",
+      "Register Account UnSuccess",
+      [
+        // { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
+        { text: "OK" }
+      ],
+      { cancelable: false }
+    );
+
   }
 
-  addProfile = async (payload) => {
+  uploadSuccess = async (uri) => {
+    console.log('Uploaded Success...');
+    this.setState({ uri: uri })
+    console.log(this.state.uri);
     var User = {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      uid: payload.user.uid
+      uid: firebase.auth().currentUser.uid,
+      uri: uri
     }
     await firestore.addUser(User, this.success, this.unsuccess);
     this.props.add(User);
+  };
+
+  uploadError = (error) => {
+    console.log('Uploaded Error...');
+    console.log(error);
+  };
+  onUpload = (progress) => {
+    console.log('onUpload...');
+    console.log(progress);
+  };
+
+  addProfile = async (payload) => {
+    /////// Storage /////////
+    await storage.uploadToFirebase(
+      this.state.image,
+      this.state.email, //name file
+      this.uploadSuccess,
+      this.uploadError,
+    );
+    ///////////////////
+    // var User = {
+    //   firstname: this.state.firstname,
+    //   lastname: this.state.lastname,
+    //   uid: payload.user.uid,
+    //   // uri: this.state.uri
+    // }
+    // await firestore.addUser(User, this.success, this.unsuccess);
+    // this.props.add(User);
   }
 
   onRegister = async () => {
+
     await auth.createUser(this.state.email, this.state.password, this.addProfile, this.unsuccess)
     //  await this.props.add(User)
     //await auth.createUser(this.state.email, this.state.password, this.unsuccess)
-
     // await firestore.addUser(User, this.success, this.unsuccess);
     console.log("Regis")
 
   }
 
+  ///////////////// image ///////////////////////
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1, //og  size
+    });
+    if (!result.cancelled) {
+      console.log(result);
+      this.setState({ image: result.uri });
+    }
+  };
+
   render(props) {
     const { navigation } = this.props;
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 35 }} >
+
+        <View style={styles.onimage}>
+          <TouchableOpacity onPress={this.pickImage}>
+            <Image style={styles.icon} source={{
+              uri: this.state.image
+            }} />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.content}>
 
           <TextInput
             placeholder="FirstName"
             style={styles.textInput}
-            onChangeText={txt => { this.setState({ firstname: txt }) }} />
+            onChangeText={txt => { this.setState({ firstname: txt }) }}
+          />
+          {/* {txt => (txt === '' && aaaa) ? <Text>please </Text> : ''} */}
+
 
           <TextInput
             placeholder="LastName"
@@ -237,6 +188,7 @@ class Registraion extends Component {
           <TextInput
             placeholder="Password"
             style={styles.textInput}
+            secureTextEntry={true}
             onChangeText={txt => { this.setState({ password: txt }) }} />
 
           <TouchableOpacity
@@ -273,11 +225,29 @@ const styles = StyleSheet.create({
     paddingStart: 20,
     marginBottom: 8
   },
+  onimage: {
+    flex: 1,
+    padding: 16,
+    margin: 1,
+    paddingTop: 35,
+
+    width: "100%"
+  },
   content: {
+    flex: 2,
     padding: 16,
     margin: 16,
     width: "90%"
-  }
+  },
+  icon: {
+    height: 180,
+    width: 180,
+    borderRadius: 90,
+    // backgroundColor:'gray',
+    alignSelf: 'center',
+    opacity: 1
+  },
+
 
 });
 

@@ -21,7 +21,7 @@ const carReducer = (state = intialSate, action) => {
       }
     case EDIT_POST_CAR:
       return {
-        ...state, cars: state.cars.map(car => (car.uid === action.car.uid) ? { ...car, firstname: action.car.firstname, lastname: action.car.lastname } : car)
+        ...state, cars: state.cars.map(car => (car.uid === action.car.uid) ? { ...car, firstname: action.car.firstname, lastname: action.car.lastname ,uri : action.car.uri} : car)
       }
     case DELETE_CAR:
       console.log("test")

@@ -9,6 +9,7 @@ import { useRoute } from '@react-navigation/native';
 import { addCar } from './actions/car';
 import { connect } from 'react-redux';
 
+
 class Menu extends Component {
   constructor(props) {
     super(props);
@@ -45,14 +46,16 @@ class Menu extends Component {
 
   onLoad = () => {
     // firestore.getCar(this.getSuccess, this.getUnsuccess)
-    console.log('Click Menu')
+    this.props.navigation.navigate("YourList");
+    console.log('Click JobJab')
+
   }
 
   renderHeader = () => {
     return (
       <View style={styles.viewStyle}>
         <TouchableOpacity onPress={this.onLoad}>
-          <Text style={styles.textStyle}>Menu</Text>
+          <Text style={styles.textStyle}>JobJab</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ position: 'absolute', right: 8 }} onPress={this.onAdd}>
           <Entypo name="add-to-list" size={24} color="black" />
@@ -81,16 +84,22 @@ class Menu extends Component {
   };
 
   renderItem = ({ item }) => {
-
+    console.log('OnMenu Uri')
+    console.log(item.uri)
+    console.log('OnMenu End')
     return (
       <View>
         <TouchableOpacity style={{ backgroundColor: "white" }} onPress={() => { this.props.navigation.navigate("Edit", { car: item }) }}>
           <View style={styles.itemStyle}>
             <View style={{ paddingLeft: 8, flex: 1 }}>
+              {/* <View style={styles.onimage}> */}
+              <Image style={styles.icon} source={{
+                uri: item.uri
+              }} />
 
+              {/* </View> */}
               <Text style={styles.title}>{item.firstname}</Text>
               <Text style={styles.title}>{item.lastname}</Text>
-
               <Text style={styles.title}>{item.model}</Text>
               <Text>{item.description}</Text>
               <Text>{this.state.selectedID}</Text>
@@ -135,6 +144,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
     paddingStart: 8,
+    // paddingTop: 30,
     height: 60,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -143,7 +153,23 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontSize: 20
-  }
+  },
+  icon: {
+    height: 40,
+    width: 40,
+    borderRadius: 90,
+    backgroundColor: 'gray',
+    // alignSelf: 'center',
+    opacity: 1
+  },
+  onimage: {
+    flex: 1,
+    padding: 16,
+    margin: 1,
+    paddingTop: 35,
+
+    width: "100%"
+  },
 });
 
 const mapStateToProps = (state) => {

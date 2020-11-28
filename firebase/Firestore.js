@@ -61,6 +61,7 @@ class Firestore {
       .update({
         firstname: user.firstname,
         lastname: user.lastname,
+        uri : user.uri
         // studentID: user.studentID,
         // username: user.username,
       })
@@ -79,6 +80,8 @@ class Firestore {
       .update({
         firstname: upCar.firstname,
         lastname: upCar.lastname,
+        uri : upCar.uri
+
       })
       .then(function () {
         success(null);

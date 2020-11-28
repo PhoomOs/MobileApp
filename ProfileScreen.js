@@ -6,18 +6,23 @@ import { addUser } from './actions/User';
 import auth from './firebase/Auth';
 import { updateCar } from './actions/car';
 import * as firebase from 'firebase';
+
+import 'firebase/storage';
+import * as ImagePicker from 'expo-image-picker';
+import storage from './firebase/Storage';
+
 class Profile extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       id: this.props.todos.id, //docId
       // username: this.props.todos.username,
       //   studentID: this.props.todos.studentID,
       firstname: this.props.todos.firstname,
       lastname: this.props.todos.lastname,
+      image: this.props.todos.uri,
+      uri: null
     };
-
   }
 
 
@@ -45,7 +50,7 @@ class Profile extends Component {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
       id: this.state.id,
-
+      uri: this.state.uri
     }
     this.props.add(user);
     Alert.alert(
@@ -65,19 +70,19 @@ class Profile extends Component {
     let upCar = {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      uid: firebase.auth().currentUser.uid
+      uid: firebase.auth().currentUser.uid,
+      uri: this.state.uri,
+      // number : Math.floor(Math.random())
     }
     querySnapshot.forEach(async function (doc) {
       let car = doc.data();
       car.id = doc.id
       cars = cars.concat(car);
-
     });
 
     await cars.map((car) => { firestore.updateUserPost(car, upCar, this.updateCarSuccess, this.reject) })
     console.log('onGetCarByUid Before Success');
     console.log(cars);
-
     this.props.updateCar(upCar)
     console.log(upCar)
     console.log('onUpCar')
@@ -85,28 +90,48 @@ class Profile extends Component {
     // this.props.add(users[0])
 
     console.log('onUpCar END')
-    // let car = {
-    //   firstname: this.state.firstname,
-    //   lastname: this.state.lastname,
-    //   // id: this.props.cars.id
-    //   id: '9Cvo9CdbKBqBi6ffIyXw'
-    // }
-
-    // console.log(car.id)
-    // console.log('onCarId')
-
-    // this.props.updateCar(car);
-    // console.log("updatePost success")
-    // console.log(this.props.cars)
-    // console.log('updatePost END')
   }
 
-  editProfile = async () => {
+  uploadSuccess = async (uri) => {
+    // console.log('Uploaded Success...');
+
+    // this.setState({ uri: uri })
+    // console.log(this.state.uri);
+
+    // var User = {
+    //   firstname: this.state.firstname,
+    //   lastname: this.state.lastname,
+    //   uid: firebase.auth().currentUser.uid,
+    //   uri: uri
+    // }
+
+    // await firestore.addUser(User, this.success, this.unsuccess);
+    // this.props.add(User);
+  };
+
+  uploadError = (error) => {
+    console.log('Uploaded Error...');
+    console.log(error);
+  };
+
+  onSaveEdit = async () => {
+    await storage.uploadToFirebase(
+      this.state.image,
+      this.state.number,
+      // this.uploadSuccess,
+      this.editProfile,
+      this.uploadError,
+    );
+  }
+
+  editProfile = async (uri) => {
+
+    this.setState({ uri: uri })
     let user = {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
       id: this.state.id,
-
+      uri: uri
       //   studentID: this.state.studentID,
       //   username: this.state.username,
     }
@@ -114,16 +139,16 @@ class Profile extends Component {
     let car = {
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      uid: firebase.auth().currentUser.uid
+      uid: firebase.auth().currentUser.uid,
+      uri: uri
     }
-
     console.log('onEditProfile User : ', user)
     console.log(firebase.auth().currentUser.uid)
     await firestore.updateUser(user, this.updateSuccess, this.reject)
-
     console.log('onEditProfile Car : ', car)
     await firestore.getCarByUid(car, this.onGetCarByUid, this.reject)
   }
+
 
   Header = () => {
     return (
@@ -138,10 +163,34 @@ class Profile extends Component {
     );
   }
 
+  ///////////////// image ///////////////////////
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1, //og  size
+    });
+    if (!result.cancelled) {
+      console.log(result);
+      this.setState({ image: result.uri });
+    }
+  };
+
+
+
   render(props) {
     return (
       <View style={{ flex: 1, paddingTop: 30 }}>
         <this.Header />
+
+        <View style={styles.onimage}>
+          <TouchableOpacity onPress={this.pickImage}>
+            <Image style={styles.icon} source={{
+              uri: this.state.image
+            }} />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.middle} >
           <TextInput placeholder="First Name" style={styles.textInput} value={this.state.firstname}
             onChangeText={(firstname) => this.setState({ firstname })} />
@@ -149,14 +198,7 @@ class Profile extends Component {
           <TextInput placeholder="Last Name" style={styles.textInput} value={this.state.lastname}
             onChangeText={(lastname) => this.setState({ lastname })} />
 
-          {/* <TextInput placeholder="StudentID" style={styles.textInput} value={this.state.studentID}
-            onChangeText={(studentID) => this.setState({ studentID })} /> */}
-
-          {/* <TextInput placeholder="Username" style={styles.textInput} value={this.state.username}
-            onChangeText={(username) => this.setState({ username })} /> */}
-
-
-          <TouchableOpacity style={styles.buttonLogin} onPress={this.editProfile}>
+          <TouchableOpacity style={styles.buttonLogin} onPress={this.onSaveEdit}>
             <Text style={{ fontSize: 15 }}>Save</Text>
           </TouchableOpacity>
 
@@ -209,6 +251,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     padding: 16,
     margin: 16,
+  },
+  icon: {
+    height: 180,
+    width: 180,
+    borderRadius: 90,
+    backgroundColor: 'blue',
+    alignSelf: 'center',
+    opacity: 1
+  },
+  onimage: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    margin: 1,
+    paddingTop: 35,
+    backgroundColor: 'white',
+    width: "100%"
   },
 });
 

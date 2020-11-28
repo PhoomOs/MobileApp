@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     TextInput,
     StyleSheet,
+    Alert
 } from 'react-native';
 
 import auth from './firebase/Auth';
@@ -26,9 +27,9 @@ class Login extends Component {
 
     //ทำงานอยู่ตลอดเวลาหลังจาก constructor
     componentDidMount() {
-        auth.listeningCurrentUser(this.listeningUser);
+        // auth.listeningCurrentUser(this.listeningUser);
         firestore.getAllCar(this.onSuccessPost, this.onreject);
-        
+
     }
 
     // check login
@@ -37,8 +38,9 @@ class Login extends Component {
             // console.log('Login Successssss');
             // this.props.add(user)
             /////////////////// Car //////////////////////
-            
-            this.props.navigation.navigate('MyBottomtab');
+
+            // this.props.navigation.navigate('MyBottomtab');
+
             // this.props.navigation.navigate('Profile');
         }
         else {
@@ -48,11 +50,21 @@ class Login extends Component {
 
     onreject = (error) => {
         console.log(error);
+        Alert.alert(
+            "Alert !!",
+            "Login UnSuccess",
+            [
+                // { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
+                { text: "OK" }
+            ],
+            { cancelable: false }
+        );
 
     };
 
 
     onsuccess = (querySnapshot) => {
+
         var users = []
         querySnapshot.forEach(function (doc) {
             let user = doc.data();
@@ -62,6 +74,17 @@ class Login extends Component {
         console.log('onLogin Success');
         console.log(users);
         this.props.add(users[0])
+        this.props.navigation.navigate("MyBottomtab");
+        Alert.alert(
+            "Alert !!",
+            "Login Success",
+            [
+                // { text: "OK", onPress: () => this.props.navigation.navigate("Login") }
+                { text: "OK" }
+            ],
+            { cancelable: false }
+        );
+
     }
 
 
@@ -76,10 +99,11 @@ class Login extends Component {
         console.log('onLogin')
         console.log(cars);
         console.log('onLogin END')
-        // this.props.navigation.navigate("MyBottomtab");
+        //  this.props.navigation.navigate("MyBottomtab");
     }
 
     onLoad = (querySnapshot) => {
+
         console.log('click');
         let uid = querySnapshot.user.uid
         console.log(uid)
@@ -87,13 +111,10 @@ class Login extends Component {
         firestore.getUserByUid(uid, this.onsuccess, this.onreject)
         // firestore.getAllCar(this.onSuccessPost, this.onreject);
 
-        
         // .forEach(function (doc) {
         //         let user = doc.data();
         //         users = users.concat(user)
         //     });
-
-
         // console.log(users)
         // console.log("endddddd")
         // console.log(uid)
@@ -149,6 +170,7 @@ class Login extends Component {
 
                     <TextInput
                         placeholder="Password"
+                        secureTextEntry={true}
                         style={styles.textInput}
                         onChangeText={(txt) => {
                             this.setState({ password: txt });

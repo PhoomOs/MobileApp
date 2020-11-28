@@ -68,6 +68,7 @@ class Edit extends Component {
     console.log('onDelete')
     console.log(this.props.cars)
     console.log('onDelete END')
+    this.props.navigation.navigate('MyBottomtab');
   }
 
   onDelete = async () => {
